@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Check, X } from 'lucide-react';
-import { MenuItem } from '@/types/menu';
+import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,41 +13,71 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
+type MenuItem = Database['public']['Tables']['menu_items']['Row'];
+type MenuItemInsert = Database['public']['Tables']['menu_items']['Insert'];
+type MenuItemUpdate = Database['public']['Tables']['menu_items']['Update'];
+
 interface MenuManagementProps {
-  menuItems: MenuItem[];
-  setMenuItems: (items: MenuItem[]) => void;
+  onMenuUpdate: () => void;
 }
 
 const categories = ['Starters', 'Main Course', 'Desserts', 'Beverages'] as const;
 
-const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
+const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<MenuItem>>({
+  const [formData, setFormData] = useState<Partial<MenuItemInsert>>({
     name: '',
     category: 'Starters',
     price: 0,
     description: '',
     available: true,
   });
+  const [loading, setLoading] = useState(true);
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
+
+  const fetchMenuItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('*')
+        .order('category', { ascending: true })
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setMenuItems(data || []);
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
+      toast.error('Failed to load menu items');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdd = async () => {
     if (!formData.name || !formData.price) {
       toast.error('Please fill all required fields');
       return;
     }
 
-    const newItem: MenuItem = {
-      id: Date.now().toString(),
-      name: formData.name,
-      category: formData.category as MenuItem['category'],
-      price: Number(formData.price),
-      description: formData.description || '',
-      available: formData.available ?? true,
-    };
+    try {
+      const { error } = await supabase
+        .from('menu_items')
+        .insert([formData as MenuItemInsert]);
 
-    setMenuItems([...menuItems, newItem]);
-    setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
-    toast.success('Item added successfully');
+      if (error) throw error;
+
+      toast.success('Item added successfully');
+      setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
+      fetchMenuItems();
+      onMenuUpdate();
+    } catch (error) {
+      console.error('Error adding item:', error);
+      toast.error('Failed to add item');
+    }
   };
 
   const handleEdit = (item: MenuItem) => {
@@ -54,40 +85,62 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
     setFormData(item);
   };
 
-  const handleUpdate = () => {
-    if (!formData.name || !formData.price) {
+  const handleUpdate = async () => {
+    if (!formData.name || !formData.price || !editingId) {
       toast.error('Please fill all required fields');
       return;
     }
 
-    setMenuItems(
-      menuItems.map((item) =>
-        item.id === editingId
-          ? {
-              ...item,
-              name: formData.name!,
-              category: formData.category as MenuItem['category'],
-              price: Number(formData.price),
-              description: formData.description || '',
-              available: formData.available ?? true,
-            }
-          : item
-      )
-    );
-    setEditingId(null);
-    setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
-    toast.success('Item updated successfully');
+    try {
+      const { error } = await supabase
+        .from('menu_items')
+        .update(formData as MenuItemUpdate)
+        .eq('id', editingId);
+
+      if (error) throw error;
+
+      toast.success('Item updated successfully');
+      setEditingId(null);
+      setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
+      fetchMenuItems();
+      onMenuUpdate();
+    } catch (error) {
+      console.error('Error updating item:', error);
+      toast.error('Failed to update item');
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setMenuItems(menuItems.filter((item) => item.id !== id));
-    toast.success('Item deleted successfully');
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('menu_items')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast.success('Item deleted successfully');
+      fetchMenuItems();
+      onMenuUpdate();
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      toast.error('Failed to delete item');
+    }
   };
 
   const handleCancel = () => {
     setEditingId(null);
     setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
   };
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-muted-foreground">Loading menu...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -104,7 +157,7 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
               <Input
                 id="name"
                 placeholder="e.g., Butter Chicken"
-                value={formData.name}
+                value={formData.name || ''}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
@@ -113,7 +166,7 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
               <Label htmlFor="category">Category *</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value as MenuItem['category'] })}
+                onValueChange={(value) => setFormData({ ...formData, category: value as typeof categories[number] })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -134,9 +187,10 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
                 id="price"
                 type="number"
                 min="0"
+                step="0.01"
                 placeholder="0.00"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                value={formData.price || ''}
+                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
               />
             </div>
 
@@ -144,7 +198,7 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
               <div className="flex items-center space-x-2">
                 <Switch
                   id="available"
-                  checked={formData.available}
+                  checked={formData.available ?? true}
                   onCheckedChange={(checked) => setFormData({ ...formData, available: checked })}
                 />
                 <Label htmlFor="available">Available</Label>
@@ -156,7 +210,7 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
               <Textarea
                 id="description"
                 placeholder="Describe the item..."
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
@@ -190,13 +244,13 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
                     <CardContent className="pt-6">
                       <div className="grid md:grid-cols-2 gap-3">
                         <Input
-                          value={formData.name}
+                          value={formData.name || ''}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="Name"
                         />
                         <Select
                           value={formData.category}
-                          onValueChange={(value) => setFormData({ ...formData, category: value as MenuItem['category'] })}
+                          onValueChange={(value) => setFormData({ ...formData, category: value as typeof categories[number] })}
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -211,19 +265,19 @@ const MenuManagement = ({ menuItems, setMenuItems }: MenuManagementProps) => {
                         </Select>
                         <Input
                           type="number"
-                          value={formData.price}
-                          onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                          value={formData.price || ''}
+                          onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
                           placeholder="Price"
                         />
                         <div className="flex items-center space-x-2">
                           <Switch
-                            checked={formData.available}
+                            checked={formData.available ?? true}
                             onCheckedChange={(checked) => setFormData({ ...formData, available: checked })}
                           />
                           <Label>Available</Label>
                         </div>
                         <Textarea
-                          value={formData.description}
+                          value={formData.description || ''}
                           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                           placeholder="Description"
                           className="md:col-span-2"

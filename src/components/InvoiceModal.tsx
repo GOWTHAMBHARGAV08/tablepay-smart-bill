@@ -1,15 +1,20 @@
 import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { X, Download, Printer, CreditCard, Wallet, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { CartItem, Customer } from '@/types/menu';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import logo from '@/assets/logo.png';
+
+type MenuItem = Database['public']['Tables']['menu_items']['Row'];
+type CartItem = MenuItem & { quantity: number };
+type Customer = { name: string; tableNumber: string; contact: string };
 
 interface InvoiceModalProps {
   cart: CartItem[];
@@ -19,7 +24,9 @@ interface InvoiceModalProps {
 }
 
 const InvoiceModal = ({ cart, customer, onClose, onComplete }: InvoiceModalProps) => {
+  const { user } = useAuth();
   const [paymentMode, setPaymentMode] = useState<'cash' | 'card' | 'upi'>('cash');
+  const [saving, setSaving] = useState(false);
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const orderId = `TP${Date.now().toString().slice(-8)}`;
@@ -58,6 +65,56 @@ const InvoiceModal = ({ cart, customer, onClose, onComplete }: InvoiceModalProps
 
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`TablePay_Invoice_${orderId}.pdf`);
+  };
+
+  const handleCompleteOrder = async () => {
+    setSaving(true);
+    try {
+      // Save order to database
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert([{
+          order_number: orderId,
+          customer_name: customer.name,
+          customer_contact: customer.contact || null,
+          table_number: customer.tableNumber,
+          subtotal,
+          tax,
+          discount,
+          service_charge: serviceCharge,
+          total,
+          payment_mode: paymentMode,
+          status: 'completed',
+          created_by: user?.id,
+        }])
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Save order items
+      const orderItems = cart.map(item => ({
+        order_id: orderData.id,
+        menu_item_id: item.id,
+        item_name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        line_total: item.price * item.quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      onComplete();
+    } catch (error) {
+      console.error('Error saving order:', error);
+      alert('Failed to save order. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -196,8 +253,8 @@ const InvoiceModal = ({ cart, customer, onClose, onComplete }: InvoiceModalProps
             <Download className="mr-2 h-4 w-4" />
             Download PDF
           </Button>
-          <Button onClick={onComplete} className="flex-1">
-            Complete Order
+          <Button onClick={handleCompleteOrder} className="flex-1" disabled={saving}>
+            {saving ? 'Saving...' : 'Complete Order'}
           </Button>
         </div>
       </DialogContent>

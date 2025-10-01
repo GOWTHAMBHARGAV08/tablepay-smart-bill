@@ -1,92 +1,305 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LogIn } from 'lucide-react';
+import { LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const { login } = useAuth();
-  const navigate = useNavigate();
+type LoginMode = 'login' | 'signup';
 
-  const handleLogin = (e: React.FormEvent) => {
+const Login = () => {
+  const navigate = useNavigate();
+  const { signIn, signUp, profile } = useAuth();
+  
+  // Admin section state
+  const [adminMode, setAdminMode] = useState<LoginMode>('login');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminName, setAdminName] = useState('');
+  const [adminLoading, setAdminLoading] = useState(false);
+
+  // Cashier section state
+  const [cashierMode, setCashierMode] = useState<LoginMode>('login');
+  const [cashierEmail, setCashierEmail] = useState('');
+  const [cashierPassword, setCashierPassword] = useState('');
+  const [cashierName, setCashierName] = useState('');
+  const [cashierLoading, setCashierLoading] = useState(false);
+
+  // Redirect if already logged in
+  if (profile) {
+    navigate('/dashboard');
+    return null;
+  }
+
+  const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (login(username, password)) {
-      toast.success('Login successful!');
-      navigate('/dashboard');
-    } else {
-      toast.error('Invalid credentials');
+    setAdminLoading(true);
+
+    try {
+      if (adminMode === 'login') {
+        const { error } = await signIn(adminEmail, adminPassword);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Login successful!');
+          navigate('/dashboard');
+        }
+      } else {
+        const { error } = await signUp(adminEmail, adminPassword, adminName, 'admin');
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Account created! You can now log in.');
+          setAdminMode('login');
+          setAdminName('');
+        }
+      }
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const handleCashierSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCashierLoading(true);
+
+    try {
+      if (cashierMode === 'login') {
+        const { error } = await signIn(cashierEmail, cashierPassword);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Login successful!');
+          navigate('/dashboard');
+        }
+      } else {
+        const { error } = await signUp(cashierEmail, cashierPassword, cashierName, 'cashier');
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Account created! You can now log in.');
+          setCashierMode('login');
+          setCashierName('');
+        }
+      }
+    } finally {
+      setCashierLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-accent/20 to-secondary/20 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-accent/20 to-secondary/20 p-4">
+      {/* Logo and Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        className="text-center mb-8"
       >
-        <Card className="w-full max-w-md shadow-2xl border-2">
-          <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center">
-              <img src={logo} alt="TablePay Logo" className="h-24 w-auto" />
-            </div>
-            <CardTitle className="text-3xl font-bold">TablePay</CardTitle>
-            <CardDescription className="text-base">Smart Dining, Smarter Billing</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full" size="lg">
-                <LogIn className="mr-2 h-4 w-4" />
-                Login
-              </Button>
-            </form>
-            
-            <div className="mt-6 pt-6 border-t">
-              <p className="text-sm text-muted-foreground text-center mb-3">Demo Credentials:</p>
-              <div className="space-y-2 text-xs">
-                <div className="bg-muted p-3 rounded-lg">
-                  <p className="font-semibold">Admin:</p>
-                  <p>Username: admin | Password: admin123</p>
-                </div>
-                <div className="bg-muted p-3 rounded-lg">
-                  <p className="font-semibold">Cashier:</p>
-                  <p>Username: cashier | Password: cashier123</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <img src={logo} alt="TablePay Logo" className="h-20 w-auto mx-auto mb-3" />
+        <h1 className="text-4xl font-bold">TablePay</h1>
+        <p className="text-muted-foreground">Smart Dining, Smarter Billing</p>
       </motion.div>
+
+      {/* Two-Section Login */}
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-6">
+        {/* Admin Section - Mint Green */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card className="shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card to-primary/5">
+            <CardHeader className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-2">
+                <LogIn className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Admin Portal</CardTitle>
+              <CardDescription>Full system access and management</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={adminMode} onValueChange={(v) => setAdminMode(v as LoginMode)}>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="login">
+                  <form onSubmit={handleAdminSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-email">Email</Label>
+                      <Input
+                        id="admin-email"
+                        type="email"
+                        placeholder="admin@tablepay.com"
+                        value={adminEmail}
+                        onChange={(e) => setAdminEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-password">Password</Label>
+                      <Input
+                        id="admin-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={adminPassword}
+                        onChange={(e) => setAdminPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" size="lg" disabled={adminLoading}>
+                      {adminLoading ? 'Logging in...' : 'Login as Admin'}
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="signup">
+                  <form onSubmit={handleAdminSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-signup-name">Full Name</Label>
+                      <Input
+                        id="admin-signup-name"
+                        placeholder="John Doe"
+                        value={adminName}
+                        onChange={(e) => setAdminName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-signup-email">Email</Label>
+                      <Input
+                        id="admin-signup-email"
+                        type="email"
+                        placeholder="admin@tablepay.com"
+                        value={adminEmail}
+                        onChange={(e) => setAdminEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-signup-password">Password</Label>
+                      <Input
+                        id="admin-signup-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={adminPassword}
+                        onChange={(e) => setAdminPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" size="lg" disabled={adminLoading}>
+                      {adminLoading ? 'Creating Account...' : 'Create Admin Account'}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Cashier Section - Pastel Pink */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="shadow-2xl border-2 border-secondary/50 bg-gradient-to-br from-card to-secondary/10">
+            <CardHeader className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center mb-2">
+                <UserPlus className="h-8 w-8 text-secondary-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Cashier Portal</CardTitle>
+              <CardDescription>Order taking and billing access</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={cashierMode} onValueChange={(v) => setCashierMode(v as LoginMode)}>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="login">
+                  <form onSubmit={handleCashierSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cashier-email">Email</Label>
+                      <Input
+                        id="cashier-email"
+                        type="email"
+                        placeholder="cashier@tablepay.com"
+                        value={cashierEmail}
+                        onChange={(e) => setCashierEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cashier-password">Password</Label>
+                      <Input
+                        id="cashier-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={cashierPassword}
+                        onChange={(e) => setCashierPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" variant="secondary" className="w-full" size="lg" disabled={cashierLoading}>
+                      {cashierLoading ? 'Logging in...' : 'Login as Cashier'}
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="signup">
+                  <form onSubmit={handleCashierSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cashier-signup-name">Full Name</Label>
+                      <Input
+                        id="cashier-signup-name"
+                        placeholder="Jane Smith"
+                        value={cashierName}
+                        onChange={(e) => setCashierName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cashier-signup-email">Email</Label>
+                      <Input
+                        id="cashier-signup-email"
+                        type="email"
+                        placeholder="cashier@tablepay.com"
+                        value={cashierEmail}
+                        onChange={(e) => setCashierEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cashier-signup-password">Password</Label>
+                      <Input
+                        id="cashier-signup-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={cashierPassword}
+                        onChange={(e) => setCashierPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                    <Button type="submit" variant="secondary" className="w-full" size="lg" disabled={cashierLoading}>
+                      {cashierLoading ? 'Creating Account...' : 'Create Cashier Account'}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 };

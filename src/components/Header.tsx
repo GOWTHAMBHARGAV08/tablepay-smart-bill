@@ -7,7 +7,7 @@ import logo from '@/assets/logo.png';
 import { useState, useEffect } from 'react';
 
 const Header = () => {
-  const { user, logout } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -26,8 +26,8 @@ const Header = () => {
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     toast.success('Logged out successfully');
     navigate('/');
   };
@@ -44,10 +44,10 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {user && (
+          {profile && (
             <div className="text-right mr-4">
-              <p className="text-sm font-medium">{user.username}</p>
-              <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+              <p className="text-sm font-medium">{profile.full_name || profile.email}</p>
+              <p className="text-xs text-muted-foreground capitalize">{profile.role}</p>
             </div>
           )}
           
@@ -55,7 +55,7 @@ const Header = () => {
             {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>
 
-          {user && (
+          {profile && (
             <Button variant="destructive" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               Logout

@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Minus, Plus, Trash2, CreditCard } from 'lucide-react';
-import { CartItem, Customer } from '@/types/menu';
+import { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+
+type MenuItem = Database['public']['Tables']['menu_items']['Row'];
+type CartItem = MenuItem & { quantity: number };
+type Customer = { name: string; tableNumber: string; contact: string };
 
 interface CartProps {
   cart: CartItem[];
