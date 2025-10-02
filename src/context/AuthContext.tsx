@@ -30,11 +30,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [role, setRole] = useState<UserRole | null>(null);
+  const [role, setRole] = useState<UserRole | null>(() => {
+    const stored = localStorage.getItem('tp_role');
+    return stored === 'admin' || stored === 'cashier' ? (stored as UserRole) : null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
+    // Listen for auth changes FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        // Defer supabase calls to avoid potential deadlocks
+        setTimeout(() => fetchProfile(session.user.id), 0);
+      } else {
+        setProfile(null);
+        setLoading(false);
+      }
+    });
+
+    // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -44,45 +59,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-        setLoading(false);
-      }
-    });
-
     return () => subscription.unsubscribe();
   }, []);
 
   const fetchProfile = async (userId: string) => {
+    setLoading(true);
+    // Fetch profile (non-blocking for role)
     try {
-      // Fetch profile
-      const { data: profileData, error: profileError } = await supabase
+      const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
+      setProfile(profileData ?? null);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setProfile(null);
+    }
 
-      if (profileError) throw profileError;
-      setProfile(profileData);
-
-      // Fetch role from user_roles table
+    // Fetch role (critical for routing)
+    try {
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
         .single();
-
       if (roleError) throw roleError;
       setRole(roleData.role);
+      localStorage.setItem('tp_role', roleData.role);
     } catch (error) {
-      console.error('Error fetching profile:', error);
-      setProfile(null);
-      setRole(null);
+      console.error('Error fetching user role:', error);
+      // Keep any existing/stored role to avoid blocking navigation
     } finally {
       setLoading(false);
     }
@@ -98,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             full_name: fullName,
             role: role,
           },
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/`,
         },
       });
 
@@ -127,6 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setProfile(null);
     setRole(null);
+    localStorage.removeItem('tp_role');
   };
 
   return (

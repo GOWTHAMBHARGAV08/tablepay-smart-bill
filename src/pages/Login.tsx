@@ -15,7 +15,7 @@ type LoginMode = 'login' | 'signup';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, profile, role } = useAuth();
+  const { signIn, signUp, profile, role, user } = useAuth();
   
   // Admin section state
   const [adminMode, setAdminMode] = useState<LoginMode>('login');
@@ -33,14 +33,14 @@ const Login = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (profile && role) {
+    if (user && role) {
       if (role === 'admin') {
         navigate('/admin-dashboard', { replace: true });
       } else {
         navigate('/cashier-dashboard', { replace: true });
       }
     }
-  }, [profile, role, navigate]);
+  }, [user, role, navigate]);
 
   const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
