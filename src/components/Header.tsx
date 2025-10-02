@@ -7,7 +7,7 @@ import logo from '@/assets/logo.png';
 import { useState, useEffect } from 'react';
 
 const Header = () => {
-  const { profile, signOut } = useAuth();
+  const { profile, role, signOut } = useAuth();
   const navigate = useNavigate();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -47,7 +47,7 @@ const Header = () => {
           {profile && (
             <div className="text-right mr-4">
               <p className="text-sm font-medium">{profile.full_name || profile.email}</p>
-              <p className="text-xs text-muted-foreground capitalize">{profile.role}</p>
+              <p className="text-xs text-muted-foreground capitalize">{role}</p>
             </div>
           )}
           

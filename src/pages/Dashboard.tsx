@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import Header from '@/components/Header';
@@ -7,27 +5,7 @@ import BillingSection from '@/components/BillingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Dashboard = () => {
-  const { profile, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !profile) {
-      navigate('/');
-    }
-  }, [profile, loading, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!profile) return null;
+  const { role } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-secondary/10">
@@ -39,7 +17,7 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {profile.role === 'admin' ? (
+          {role === 'admin' ? (
             <Tabs defaultValue="billing" className="w-full">
               <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-6">
                 <TabsTrigger value="billing">Billing</TabsTrigger>

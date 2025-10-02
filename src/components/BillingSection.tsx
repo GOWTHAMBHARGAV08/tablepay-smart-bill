@@ -14,7 +14,7 @@ type CartItem = MenuItem & { quantity: number };
 type Customer = { name: string; tableNumber: string; contact: string };
 
 const BillingSection = () => {
-  const { profile } = useAuth();
+  const { profile, role } = useAuth();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showInvoice, setShowInvoice] = useState(false);
@@ -95,7 +95,7 @@ const BillingSection = () => {
     );
   }
 
-  if (profile?.role === 'admin') {
+  if (role === 'admin') {
     return (
       <>
         <Tabs defaultValue="menu" className="w-full">

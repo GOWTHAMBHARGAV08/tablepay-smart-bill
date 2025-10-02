@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, UserPlus } from 'lucide-react';
@@ -15,7 +15,7 @@ type LoginMode = 'login' | 'signup';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, profile } = useAuth();
+  const { signIn, signUp, profile, role } = useAuth();
   
   // Admin section state
   const [adminMode, setAdminMode] = useState<LoginMode>('login');
@@ -32,10 +32,15 @@ const Login = () => {
   const [cashierLoading, setCashierLoading] = useState(false);
 
   // Redirect if already logged in
-  if (profile) {
-    navigate('/dashboard');
-    return null;
-  }
+  useEffect(() => {
+    if (profile && role) {
+      if (role === 'admin') {
+        navigate('/admin-dashboard', { replace: true });
+      } else {
+        navigate('/cashier-dashboard', { replace: true });
+      }
+    }
+  }, [profile, role, navigate]);
 
   const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +53,7 @@ const Login = () => {
           toast.error(error.message);
         } else {
           toast.success('Login successful!');
-          navigate('/dashboard');
+          // Navigation will be handled by useEffect based on role
         }
       } else {
         const { error } = await signUp(adminEmail, adminPassword, adminName, 'admin');
@@ -76,7 +81,7 @@ const Login = () => {
           toast.error(error.message);
         } else {
           toast.success('Login successful!');
-          navigate('/dashboard');
+          // Navigation will be handled by useEffect based on role
         }
       } else {
         const { error } = await signUp(cashierEmail, cashierPassword, cashierName, 'cashier');
