@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import Header from '@/components/Header';
 import BillingSection from '@/components/BillingSection';
+import OrderHistory from '@/components/OrderHistory';
+import SalesReport from '@/components/SalesReport';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Dashboard = () => {
@@ -30,15 +32,11 @@ const Dashboard = () => {
               </TabsContent>
               
               <TabsContent value="history">
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Order history coming soon...</p>
-                </div>
+                <OrderHistory />
               </TabsContent>
               
               <TabsContent value="reports">
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Reports and analytics coming soon...</p>
-                </div>
+                <SalesReport />
               </TabsContent>
             </Tabs>
           ) : (
