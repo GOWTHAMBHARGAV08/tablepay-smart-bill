@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Check, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Check, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
@@ -32,8 +32,11 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
     price: 0,
     description: '',
     available: true,
+    image_url: '',
   });
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchMenuItems();
@@ -57,6 +60,30 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
     }
   };
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('menu-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('menu-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+      return null;
+    }
+  };
+
   const handleAdd = async () => {
     if (!formData.name || !formData.price) {
       toast.error('Please fill all required fields');
@@ -64,19 +91,30 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
     }
 
     try {
+      setUploading(true);
+      let imageUrl = formData.image_url;
+
+      if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) imageUrl = uploadedUrl;
+      }
+
       const { error } = await supabase
         .from('menu_items')
-        .insert([formData as MenuItemInsert]);
+        .insert([{ ...formData, image_url: imageUrl } as MenuItemInsert]);
 
       if (error) throw error;
 
       toast.success('Item added successfully');
-      setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
+      setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true, image_url: '' });
+      setImageFile(null);
       fetchMenuItems();
       onMenuUpdate();
     } catch (error) {
       console.error('Error adding item:', error);
       toast.error('Failed to add item');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -92,21 +130,32 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
     }
 
     try {
+      setUploading(true);
+      let imageUrl = formData.image_url;
+
+      if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) imageUrl = uploadedUrl;
+      }
+
       const { error } = await supabase
         .from('menu_items')
-        .update(formData as MenuItemUpdate)
+        .update({ ...formData, image_url: imageUrl } as MenuItemUpdate)
         .eq('id', editingId);
 
       if (error) throw error;
 
       toast.success('Item updated successfully');
       setEditingId(null);
-      setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
+      setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true, image_url: '' });
+      setImageFile(null);
       fetchMenuItems();
       onMenuUpdate();
     } catch (error) {
       console.error('Error updating item:', error);
       toast.error('Failed to update item');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -130,7 +179,8 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true });
+    setFormData({ name: '', category: 'Starters', price: 0, description: '', available: true, image_url: '' });
+    setImageFile(null);
   };
 
   if (loading) {
@@ -215,10 +265,49 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
               />
             </div>
 
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="image">Item Photo</Label>
+              <div className="flex items-center gap-4">
+                {(formData.image_url || imageFile) && (
+                  <div className="relative w-24 h-24 rounded-lg overflow-hidden border">
+                    <img
+                      src={imageFile ? URL.createObjectURL(imageFile) : formData.image_url || ''}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setImageFile(file);
+                    }}
+                    className="cursor-pointer"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Upload an image for this menu item
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="md:col-span-2">
-              <Button onClick={handleAdd} className="w-full">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Item
+              <Button onClick={handleAdd} className="w-full" disabled={uploading}>
+                {uploading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Item
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -282,10 +371,42 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
                           placeholder="Description"
                           className="md:col-span-2"
                         />
+                        <div className="md:col-span-2">
+                          <Label className="text-xs">Item Photo</Label>
+                          <div className="flex items-center gap-3 mt-2">
+                            {(formData.image_url || imageFile) && (
+                              <div className="relative w-16 h-16 rounded-lg overflow-hidden border">
+                                <img
+                                  src={imageFile ? URL.createObjectURL(imageFile) : formData.image_url || ''}
+                                  alt="Preview"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )}
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) setImageFile(file);
+                              }}
+                              className="cursor-pointer text-xs"
+                            />
+                          </div>
+                        </div>
                         <div className="md:col-span-2 flex gap-2">
-                          <Button onClick={handleUpdate} size="sm" className="flex-1">
-                            <Check className="mr-2 h-4 w-4" />
-                            Save
+                          <Button onClick={handleUpdate} size="sm" className="flex-1" disabled={uploading}>
+                            {uploading ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
+                                Saving...
+                              </>
+                            ) : (
+                              <>
+                                <Check className="mr-2 h-4 w-4" />
+                                Save
+                              </>
+                            )}
                           </Button>
                           <Button onClick={handleCancel} variant="outline" size="sm" className="flex-1">
                             <X className="mr-2 h-4 w-4" />
@@ -299,6 +420,15 @@ const MenuManagement = ({ onMenuUpdate }: MenuManagementProps) => {
                   <Card className="hover:shadow-md transition-shadow">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between gap-4">
+                        {item.image_url && (
+                          <div className="relative w-20 h-20 rounded-lg overflow-hidden border flex-shrink-0">
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="font-semibold truncate">{item.name}</h3>
