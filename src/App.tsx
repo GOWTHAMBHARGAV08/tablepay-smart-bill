@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import CashierDashboard from "./pages/CashierDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,7 +25,7 @@ const App = () => (
               path="/admin-dashboard" 
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
-                  <Dashboard />
+                  <AdminDashboard />
                 </ProtectedRoute>
               } 
             />
@@ -32,7 +33,7 @@ const App = () => (
               path="/cashier-dashboard" 
               element={
                 <ProtectedRoute allowedRoles={['cashier']}>
-                  <Dashboard />
+                  <CashierDashboard />
                 </ProtectedRoute>
               } 
             />
