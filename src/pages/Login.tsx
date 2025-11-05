@@ -106,7 +106,7 @@ const Login = () => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <img src={logo} alt="TablePay Logo" className="h-20 w-auto mx-auto mb-3" />
+        <img src={logo} alt="TablePay Logo" className="h-32 w-auto mx-auto mb-3" />
         <h1 className="text-4xl font-bold">TablePay</h1>
         <p className="text-muted-foreground">Smart Dining, Smarter Billing</p>
       </motion.div>
