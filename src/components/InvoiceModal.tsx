@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import logo from '@/assets/logo.png';
+import upiQrCode from '@/assets/upi-qr-code.jpg';
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row'];
 type CartItem = MenuItem & { quantity: number };
@@ -229,6 +230,17 @@ const InvoiceModal = ({ cart, customer, onClose, onComplete }: InvoiceModalProps
                 </Label>
               </div>
             </RadioGroup>
+            
+            {/* UPI QR Code */}
+            {paymentMode === 'upi' && (
+              <div className="flex justify-center pt-4 pb-2">
+                <div className="bg-white p-4 rounded-lg border-2 border-primary shadow-lg">
+                  <p className="text-sm font-semibold text-center mb-2">Scan to Pay</p>
+                  <img src={upiQrCode} alt="UPI QR Code" className="w-48 h-48 object-contain" />
+                  <p className="text-xs text-muted-foreground text-center mt-2">Scan with any UPI app</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* QR Code */}
