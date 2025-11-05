@@ -17,38 +17,38 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 210 20% 20%;
 
-    /* Mint Green Primary */
-    --primary: 120 100% 80%;
-    --primary-foreground: 210 20% 20%;
+    /* Orange Primary (from logo) */
+    --primary: 16 100% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Pastel Pink/Peach Secondary */
-    --secondary: 350 100% 92%;
-    --secondary-foreground: 210 20% 20%;
+    /* Dark Blue Secondary (from logo) */
+    --secondary: 210 30% 25%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 350 100% 96%;
+    --muted: 210 15% 95%;
     --muted-foreground: 210 15% 50%;
 
-    /* Pastel Peach Accent */
-    --accent: 30 100% 90%;
-    --accent-foreground: 210 20% 20%;
+    /* Light Orange Accent */
+    --accent: 16 100% 95%;
+    --accent-foreground: 210 30% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 350 30% 90%;
-    --input: 350 30% 90%;
-    --ring: 120 100% 80%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 16 100% 60%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 20% 20%;
-    --sidebar-primary: 120 100% 80%;
-    --sidebar-primary-foreground: 210 20% 20%;
-    --sidebar-accent: 350 100% 96%;
-    --sidebar-accent-foreground: 210 20% 20%;
-    --sidebar-border: 350 30% 90%;
-    --sidebar-ring: 120 100% 80%;
+    --sidebar-foreground: 210 30% 25%;
+    --sidebar-primary: 16 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 16 100% 95%;
+    --sidebar-accent-foreground: 210 30% 25%;
+    --sidebar-border: 210 20% 88%;
+    --sidebar-ring: 16 100% 60%;
   }
 
   .dark {
@@ -61,36 +61,36 @@ All colors MUST be HSL.
     --popover: 210 22% 15%;
     --popover-foreground: 0 0% 98%;
 
-    /* Mint Green Primary (darker for dark mode) */
-    --primary: 120 60% 65%;
-    --primary-foreground: 210 25% 12%;
+    /* Orange Primary (darker for dark mode) */
+    --primary: 16 90% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Pastel Pink Secondary (darker for dark mode) */
-    --secondary: 350 50% 35%;
-    --secondary-foreground: 0 0% 98%;
+    /* Dark Blue Secondary (adjusted for dark mode) */
+    --secondary: 210 40% 35%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 20% 20%;
     --muted-foreground: 210 15% 65%;
 
-    /* Pastel Peach Accent (darker for dark mode) */
-    --accent: 30 50% 40%;
-    --accent-foreground: 0 0% 98%;
+    /* Orange Accent (darker for dark mode) */
+    --accent: 16 70% 45%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 210 20% 25%;
     --input: 210 20% 25%;
-    --ring: 120 60% 65%;
+    --ring: 16 90% 55%;
     
     --sidebar-background: 210 25% 12%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 120 60% 65%;
-    --sidebar-primary-foreground: 210 25% 12%;
+    --sidebar-primary: 16 90% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 210 20% 20%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 210 20% 25%;
-    --sidebar-ring: 120 60% 65%;
+    --sidebar-ring: 16 90% 55%;
   }
 }
 
