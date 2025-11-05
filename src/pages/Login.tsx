@@ -106,7 +106,14 @@ const Login = () => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <img src={logo} alt="TablePay Logo" className="h-40 w-auto mx-auto mb-3" />
+        <motion.img 
+          src={logo} 
+          alt="TablePay Logo" 
+          className="h-40 w-auto mx-auto mb-3"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
         <h1 className="text-4xl font-bold">TablePay</h1>
         <p className="text-muted-foreground">Smart Dining, Smarter Billing</p>
       </motion.div>
