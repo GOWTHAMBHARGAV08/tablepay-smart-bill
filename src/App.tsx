@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import CashierDashboard from "./pages/CashierDashboard";
+import KitchenDashboard from "./pages/KitchenDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={['cashier']}>
                   <CashierDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/kitchen-dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={['kitchen']}>
+                  <KitchenDashboard />
                 </ProtectedRoute>
               } 
             />

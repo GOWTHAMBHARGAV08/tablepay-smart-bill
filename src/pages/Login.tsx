@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus } from 'lucide-react';
+import { LogIn, UserPlus, ChefHat } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,11 +35,22 @@ const Login = () => {
   const [cashierName, setCashierName] = useState('');
   const [cashierLoading, setCashierLoading] = useState(false);
 
+  // Kitchen section state
+  const [kitchenMode, setKitchenMode] = useState<LoginMode>('login');
+  const [kitchenEmail, setKitchenEmail] = useState('');
+  const [kitchenPassword, setKitchenPassword] = useState('');
+  const [kitchenName, setKitchenName] = useState('');
+  const [kitchenLoading, setKitchenLoading] = useState(false);
+
   // Redirect if already logged in
   useEffect(() => {
     if (user && role) {
       if (role === 'admin') {
         navigate('/admin-dashboard', {
+          replace: true
+        });
+      } else if (role === 'kitchen') {
+        navigate('/kitchen-dashboard', {
           replace: true
         });
       } else {
@@ -109,6 +120,37 @@ const Login = () => {
       setCashierLoading(false);
     }
   };
+
+  const handleKitchenSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setKitchenLoading(true);
+    try {
+      if (kitchenMode === 'login') {
+        const {
+          error
+        } = await signIn(kitchenEmail, kitchenPassword);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Login successful!');
+          // Navigation will be handled by useEffect based on role
+        }
+      } else {
+        const {
+          error
+        } = await signUp(kitchenEmail, kitchenPassword, kitchenName, 'kitchen');
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success('Account created! You can now log in.');
+          setKitchenMode('login');
+          setKitchenName('');
+        }
+      }
+    } finally {
+      setKitchenLoading(false);
+    }
+  };
   return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-accent/20 to-secondary/20 p-4">
       {/* Logo and Header */}
       <motion.div initial={{
@@ -132,8 +174,8 @@ const Login = () => {
         <p className="text-muted-foreground">Smart Dining, Smarter Billing</p>
       </motion.div>
 
-      {/* Two-Section Login */}
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-6">
+      {/* Three-Section Login */}
+      <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6">
         {/* Admin Section - Mint Green */}
         <motion.div initial={{
         opacity: 0,
@@ -199,10 +241,10 @@ const Login = () => {
           </Card>
         </motion.div>
 
-        {/* Cashier Section - Pastel Pink */}
+        {/* Cashier Section */}
         <motion.div initial={{
         opacity: 0,
-        x: 20
+        x: 0
       }} animate={{
         opacity: 1,
         x: 0
@@ -256,6 +298,71 @@ const Login = () => {
                     </div>
                     <Button type="submit" variant="secondary" className="w-full" size="lg" disabled={cashierLoading}>
                       {cashierLoading ? 'Creating Account...' : 'Create Cashier Account'}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Kitchen Section */}
+        <motion.div initial={{
+        opacity: 0,
+        x: 20
+      }} animate={{
+        opacity: 1,
+        x: 0
+      }} transition={{
+        delay: 0.3
+      }}>
+          <Card className="shadow-2xl border-2 border-accent/50 bg-gradient-to-br from-card to-accent/10">
+            <CardHeader className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto bg-accent rounded-full flex items-center justify-center mb-2">
+                <ChefHat className="h-8 w-8 text-accent-foreground" />
+              </div>
+              <CardTitle className="text-2xl">Kitchen Portal</CardTitle>
+              <CardDescription>Order management and preparation</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={kitchenMode} onValueChange={v => setKitchenMode(v as LoginMode)}>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="login">
+                  <form onSubmit={handleKitchenSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="kitchen-email">Email</Label>
+                      <Input id="kitchen-email" type="email" placeholder="kitchen@tablepay.com" value={kitchenEmail} onChange={e => setKitchenEmail(e.target.value)} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="kitchen-password">Password</Label>
+                      <Input id="kitchen-password" type="password" placeholder="••••••••" value={kitchenPassword} onChange={e => setKitchenPassword(e.target.value)} required />
+                    </div>
+                    <Button type="submit" variant="outline" className="w-full" size="lg" disabled={kitchenLoading}>
+                      {kitchenLoading ? 'Logging in...' : 'Login as Kitchen'}
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="signup">
+                  <form onSubmit={handleKitchenSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="kitchen-signup-name">Full Name</Label>
+                      <Input id="kitchen-signup-name" placeholder="Chef Mike" value={kitchenName} onChange={e => setKitchenName(e.target.value)} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="kitchen-signup-email">Email</Label>
+                      <Input id="kitchen-signup-email" type="email" placeholder="kitchen@tablepay.com" value={kitchenEmail} onChange={e => setKitchenEmail(e.target.value)} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="kitchen-signup-password">Password</Label>
+                      <Input id="kitchen-signup-password" type="password" placeholder="••••••••" value={kitchenPassword} onChange={e => setKitchenPassword(e.target.value)} required minLength={6} />
+                    </div>
+                    <Button type="submit" variant="outline" className="w-full" size="lg" disabled={kitchenLoading}>
+                      {kitchenLoading ? 'Creating Account...' : 'Create Kitchen Account'}
                     </Button>
                   </form>
                 </TabsContent>
