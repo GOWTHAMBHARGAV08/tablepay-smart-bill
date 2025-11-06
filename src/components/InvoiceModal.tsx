@@ -85,7 +85,7 @@ const InvoiceModal = ({ cart, customer, onClose, onComplete }: InvoiceModalProps
           service_charge: serviceCharge,
           total,
           payment_mode: paymentMode,
-          status: 'completed',
+          status: 'pending',
           created_by: user?.id,
         }])
         .select()
