@@ -25,6 +25,49 @@ const BillingSection = () => {
     fetchMenuItems();
   }, []);
 
+  // Real-time notification for ready orders
+  useEffect(() => {
+    const channel = supabase
+      .channel('cashier-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: 'status=eq.ready',
+        },
+        (payload) => {
+          const order = payload.new as Database['public']['Tables']['orders']['Row'];
+          
+          // Show notification
+          toast.success(
+            `Order #${order.order_number} (Table ${order.table_number}) is ready to serve!`,
+            {
+              duration: 5000,
+              style: {
+                background: 'hsl(var(--primary))',
+                color: 'hsl(var(--primary-foreground))',
+                border: '2px solid hsl(var(--primary))',
+              },
+            }
+          );
+
+          // Play notification sound
+          const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZTA0PVqzn77BdGAg+ltryxnMnBSyAzvLZiTYIGWi77eafTRAMUKfj8LZjHAY4ktfyzHksBSR3x/DdkEAKFF606+uoVRQKRp/g8r5sIQUxh9Hz04IzBh5uwO/jmUwND1as5++wXRgIPpba8sZzJwUsgM7y2Yk2CBlou+3mn00QDFCn4/C2YxwGOJLX8sx5LAUkd8fw3ZBACRVetOvrqFUUCkaf4PK+bCEFMYfR89OCMwYebs');
+          audio.volume = 0.5;
+          audio.play().catch(() => {
+            // Ignore audio play errors (e.g., user hasn't interacted with page yet)
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const fetchMenuItems = async () => {
     try {
       const { data, error } = await supabase
