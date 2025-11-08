@@ -6,6 +6,7 @@ import MenuList from './MenuList';
 import Cart from './Cart';
 import MenuManagement from './MenuManagement';
 import InvoiceModal from './InvoiceModal';
+import ReadyToServe from './ReadyToServe';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
@@ -184,19 +185,25 @@ const BillingSection = () => {
 
   return (
     <>
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <MenuList items={menuItems} onAddToCart={addToCart} />
-        </div>
-        <div>
-          <Cart
-            cart={cart}
-            customer={customer}
-            onUpdateQuantity={updateQuantity}
-            onUpdateCustomer={setCustomer}
-            onClearCart={clearCart}
-            onPlaceOrder={handlePlaceOrder}
-          />
+      <div className="space-y-6">
+        {/* Ready to Serve Section - Prominent at top */}
+        <ReadyToServe />
+        
+        {/* Billing Section */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <MenuList items={menuItems} onAddToCart={addToCart} />
+          </div>
+          <div>
+            <Cart
+              cart={cart}
+              customer={customer}
+              onUpdateQuantity={updateQuantity}
+              onUpdateCustomer={setCustomer}
+              onClearCart={clearCart}
+              onPlaceOrder={handlePlaceOrder}
+            />
+          </div>
         </div>
       </div>
 
