@@ -1,16 +1,19 @@
-import { LogOut, Moon, Sun } from 'lucide-react';
+import { LogOut, Moon, Sun, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Header = () => {
   const { profile, role, signOut } = useAuth();
   const navigate = useNavigate();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [readyOrdersCount, setReadyOrdersCount] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme') as 'light' | 'dark' | null;
@@ -19,6 +22,41 @@ const Header = () => {
       document.documentElement.classList.toggle('dark', stored === 'dark');
     }
   }, []);
+
+  // Fetch and subscribe to ready orders count (only for cashier/admin)
+  useEffect(() => {
+    if (!role || role === 'kitchen') return;
+
+    const fetchReadyCount = async () => {
+      const { count } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'ready');
+      setReadyOrdersCount(count || 0);
+    };
+
+    fetchReadyCount();
+
+    const channel = supabase
+      .channel('ready-orders-count')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders',
+          filter: 'status=eq.ready',
+        },
+        () => {
+          fetchReadyCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [role]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -56,6 +94,18 @@ const Header = () => {
             <div className="text-right mr-4">
               <p className="text-sm font-medium">{profile.full_name || profile.email}</p>
               <p className="text-xs text-muted-foreground capitalize">{role}</p>
+            </div>
+          )}
+          
+          {role && role !== 'kitchen' && readyOrdersCount > 0 && (
+            <div className="relative">
+              <Bell className="h-5 w-5 text-muted-foreground" />
+              <Badge 
+                className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                variant="destructive"
+              >
+                {readyOrdersCount}
+              </Badge>
             </div>
           )}
           
