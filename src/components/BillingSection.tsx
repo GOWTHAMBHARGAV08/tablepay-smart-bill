@@ -186,11 +186,6 @@ const BillingSection = () => {
   return (
     <>
       <div className="grid lg:grid-cols-4 gap-6">
-        {/* Ready to Serve Section - Side column */}
-        <div className="lg:col-span-1">
-          <ReadyToServe />
-        </div>
-        
         {/* Menu Section */}
         <div className="lg:col-span-2">
           <MenuList items={menuItems} onAddToCart={addToCart} />
@@ -206,6 +201,11 @@ const BillingSection = () => {
             onClearCart={clearCart}
             onPlaceOrder={handlePlaceOrder}
           />
+        </div>
+        
+        {/* Ready to Serve Section - Right side */}
+        <div className="lg:col-span-1">
+          <ReadyToServe />
         </div>
       </div>
 
