@@ -185,25 +185,27 @@ const BillingSection = () => {
 
   return (
     <>
-      <div className="space-y-6">
-        {/* Ready to Serve Section - Prominent at top */}
-        <ReadyToServe />
+      <div className="grid lg:grid-cols-4 gap-6">
+        {/* Ready to Serve Section - Side column */}
+        <div className="lg:col-span-1">
+          <ReadyToServe />
+        </div>
         
-        {/* Billing Section */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <MenuList items={menuItems} onAddToCart={addToCart} />
-          </div>
-          <div>
-            <Cart
-              cart={cart}
-              customer={customer}
-              onUpdateQuantity={updateQuantity}
-              onUpdateCustomer={setCustomer}
-              onClearCart={clearCart}
-              onPlaceOrder={handlePlaceOrder}
-            />
-          </div>
+        {/* Menu Section */}
+        <div className="lg:col-span-2">
+          <MenuList items={menuItems} onAddToCart={addToCart} />
+        </div>
+        
+        {/* Cart Section */}
+        <div className="lg:col-span-1">
+          <Cart
+            cart={cart}
+            customer={customer}
+            onUpdateQuantity={updateQuantity}
+            onUpdateCustomer={setCustomer}
+            onClearCart={clearCart}
+            onPlaceOrder={handlePlaceOrder}
+          />
         </div>
       </div>
 
