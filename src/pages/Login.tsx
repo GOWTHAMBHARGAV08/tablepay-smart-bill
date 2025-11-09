@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/tablepay-logo.png';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
