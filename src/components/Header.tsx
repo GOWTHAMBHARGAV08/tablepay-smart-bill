@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/tablepay-logo.png';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -78,7 +78,7 @@ const Header = () => {
           <motion.img 
             src={logo} 
             alt="TablePay" 
-            className="h-14 w-auto"
+            className="h-16 w-auto"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
