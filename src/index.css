@@ -8,89 +8,108 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 210 20% 20%;
+    /* Cream/Beige Background */
+    --background: 35 25% 96%;
+    --foreground: 0 50% 20%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 20% 20%;
+    --card: 35 30% 98%;
+    --card-foreground: 0 50% 20%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 20%;
+    --popover: 35 30% 98%;
+    --popover-foreground: 0 50% 20%;
 
-    /* Orange Primary (from logo) */
-    --primary: 16 100% 60%;
+    /* Saffron Orange Primary (Indian culture) */
+    --primary: 35 95% 58%;
     --primary-foreground: 0 0% 100%;
 
-    /* Dark Blue Secondary (from logo) */
-    --secondary: 210 30% 25%;
+    /* Deep Maroon Secondary (Indian culture) */
+    --secondary: 5 65% 38%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 15% 95%;
-    --muted-foreground: 210 15% 50%;
+    /* Light cream muted */
+    --muted: 35 20% 92%;
+    --muted-foreground: 0 30% 45%;
 
-    /* Light Orange Accent */
-    --accent: 16 100% 95%;
-    --accent-foreground: 210 30% 25%;
+    /* Gold Accent (Indian culture) */
+    --accent: 48 85% 60%;
+    --accent-foreground: 0 50% 20%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 16 100% 60%;
+    --border: 35 20% 85%;
+    --input: 35 20% 85%;
+    --ring: 35 95% 58%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 30% 25%;
-    --sidebar-primary: 16 100% 60%;
+    /* Emerald Green for highlights */
+    --emerald: 150 60% 45%;
+    --emerald-foreground: 0 0% 100%;
+
+    /* Royal Blue for accents */
+    --royal-blue: 230 75% 50%;
+    --royal-blue-foreground: 0 0% 100%;
+
+    --sidebar-background: 35 25% 96%;
+    --sidebar-foreground: 0 50% 20%;
+    --sidebar-primary: 35 95% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 16 100% 95%;
-    --sidebar-accent-foreground: 210 30% 25%;
-    --sidebar-border: 210 20% 88%;
-    --sidebar-ring: 16 100% 60%;
+    --sidebar-accent: 35 20% 92%;
+    --sidebar-accent-foreground: 0 50% 20%;
+    --sidebar-border: 35 20% 85%;
+    --sidebar-ring: 35 95% 58%;
   }
 
   .dark {
-    --background: 210 25% 12%;
-    --foreground: 0 0% 98%;
+    /* Dark warm background */
+    --background: 0 20% 15%;
+    --foreground: 35 25% 95%;
 
-    --card: 210 22% 15%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 25% 18%;
+    --card-foreground: 35 25% 95%;
 
-    --popover: 210 22% 15%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 25% 18%;
+    --popover-foreground: 35 25% 95%;
 
-    /* Orange Primary (darker for dark mode) */
-    --primary: 16 90% 55%;
+    /* Saffron Orange Primary (slightly darker for dark mode) */
+    --primary: 35 90% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Dark Blue Secondary (adjusted for dark mode) */
-    --secondary: 210 40% 35%;
+    /* Deep Maroon Secondary (darker for dark mode) */
+    --secondary: 5 60% 35%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 20%;
-    --muted-foreground: 210 15% 65%;
+    --muted: 0 15% 22%;
+    --muted-foreground: 35 15% 65%;
 
-    /* Orange Accent (darker for dark mode) */
-    --accent: 16 70% 45%;
+    /* Gold Accent (darker for dark mode) */
+    --accent: 48 75% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 20% 25%;
-    --input: 210 20% 25%;
-    --ring: 16 90% 55%;
+    --border: 0 20% 25%;
+    --input: 0 20% 25%;
+    --ring: 35 90% 55%;
+
+    /* Emerald Green for highlights */
+    --emerald: 150 55% 40%;
+    --emerald-foreground: 0 0% 100%;
+
+    /* Royal Blue for accents */
+    --royal-blue: 230 70% 45%;
+    --royal-blue-foreground: 0 0% 100%;
     
-    --sidebar-background: 210 25% 12%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 16 90% 55%;
+    --sidebar-background: 0 20% 15%;
+    --sidebar-foreground: 35 25% 95%;
+    --sidebar-primary: 35 90% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 20%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 210 20% 25%;
-    --sidebar-ring: 16 90% 55%;
+    --sidebar-accent: 0 15% 22%;
+    --sidebar-accent-foreground: 35 25% 95%;
+    --sidebar-border: 0 20% 25%;
+    --sidebar-ring: 35 90% 55%;
   }
 }
 
@@ -100,6 +119,10 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 }
