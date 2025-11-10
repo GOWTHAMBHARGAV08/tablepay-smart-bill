@@ -13,6 +13,10 @@ import logo from '@/assets/tablepay-logo.png';
 import adminAvatar from '@/assets/admin-avatar.png';
 import cashierAvatar from '@/assets/cashier-avatar.png';
 import kitchenAvatar from '@/assets/kitchen-avatar.png';
+import thoranamGarland from '@/assets/thoranam-garland.png';
+import bananaLeafLeft from '@/assets/banana-leaf-left.png';
+import bananaLeafRight from '@/assets/banana-leaf-right.png';
+import paisleyPattern from '@/assets/paisley-pattern.png';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
@@ -154,7 +158,42 @@ const Login = () => {
       setKitchenLoading(false);
     }
   };
-  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-accent/20 to-secondary/20 p-4">
+  return <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden p-4"
+      style={{
+        background: 'linear-gradient(135deg, hsl(30 100% 60% / 0.15) 0%, hsl(35 100% 97%) 50%, hsl(51 100% 50% / 0.1) 100%)',
+        backgroundImage: `url(${paisleyPattern})`,
+        backgroundSize: '400px 400px',
+        backgroundRepeat: 'repeat',
+        backgroundBlendMode: 'soft-light'
+      }}
+    >
+      {/* Thoranam Garland at Top */}
+      <div className="absolute top-0 left-0 right-0 w-full h-32 overflow-hidden z-10 pointer-events-none">
+        <img 
+          src={thoranamGarland} 
+          alt="Thoranam Garland" 
+          className="w-full h-full object-cover object-center opacity-90"
+        />
+      </div>
+
+      {/* Banana Leaf Left Side */}
+      <div className="absolute left-0 top-0 bottom-0 w-24 lg:w-32 overflow-hidden z-0 pointer-events-none">
+        <img 
+          src={bananaLeafLeft} 
+          alt="Banana Leaf" 
+          className="w-full h-full object-cover object-center opacity-40"
+        />
+      </div>
+
+      {/* Banana Leaf Right Side */}
+      <div className="absolute right-0 top-0 bottom-0 w-24 lg:w-32 overflow-hidden z-0 pointer-events-none">
+        <img 
+          src={bananaLeafRight} 
+          alt="Banana Leaf" 
+          className="w-full h-full object-cover object-center opacity-40"
+        />
+      </div>
+
       {/* Logo and Header */}
       <motion.div initial={{
       opacity: 0,
@@ -162,7 +201,7 @@ const Login = () => {
     }} animate={{
       opacity: 1,
       y: 0
-    }} className="text-center mb-8">
+    }} className="text-center mb-8 relative z-20">
         <motion.img src={logo} alt="TablePay Logo" className="h-40 w-auto mx-auto mb-3" initial={{
         opacity: 0,
         scale: 0.8
@@ -178,7 +217,7 @@ const Login = () => {
       </motion.div>
 
       {/* Three-Section Login */}
-      <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6">
+      <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6 relative z-20">
         {/* Admin Section - Mint Green */}
         <motion.div initial={{
         opacity: 0,
