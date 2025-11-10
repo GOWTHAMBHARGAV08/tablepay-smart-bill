@@ -10,6 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import logo from '@/assets/tablepay-logo.png';
+import adminAvatar from '@/assets/admin-avatar.png';
+import cashierAvatar from '@/assets/cashier-avatar.png';
+import kitchenAvatar from '@/assets/kitchen-avatar.png';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
@@ -188,9 +191,7 @@ const Login = () => {
       }}>
           <Card className="shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card to-primary/5">
             <CardHeader className="text-center space-y-2">
-              <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-2">
-                <LogIn className="h-8 w-8 text-primary-foreground" />
-              </div>
+              <img src={adminAvatar} alt="Admin" className="w-24 h-24 mx-auto mb-2" />
               <CardTitle className="text-2xl">Admin Portal</CardTitle>
               <CardDescription>Full system access and management</CardDescription>
             </CardHeader>
@@ -253,9 +254,7 @@ const Login = () => {
       }}>
           <Card className="shadow-2xl border-2 border-secondary/50 bg-gradient-to-br from-card to-secondary/10">
             <CardHeader className="text-center space-y-2">
-              <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center mb-2">
-                <UserPlus className="h-8 w-8 text-secondary-foreground" />
-              </div>
+              <img src={cashierAvatar} alt="Cashier" className="w-24 h-24 mx-auto mb-2" />
               <CardTitle className="text-2xl">Cashier Portal</CardTitle>
               <CardDescription>Order taking and billing access</CardDescription>
             </CardHeader>
@@ -318,9 +317,7 @@ const Login = () => {
       }}>
           <Card className="shadow-2xl border-2 border-accent/50 bg-gradient-to-br from-card to-accent/10">
             <CardHeader className="text-center space-y-2">
-              <div className="w-16 h-16 mx-auto bg-accent rounded-full flex items-center justify-center mb-2">
-                <ChefHat className="h-8 w-8 text-accent-foreground" />
-              </div>
+              <img src={kitchenAvatar} alt="Kitchen" className="w-24 h-24 mx-auto mb-2" />
               <CardTitle className="text-2xl">Kitchen Portal</CardTitle>
               <CardDescription>Order management and preparation</CardDescription>
             </CardHeader>
