@@ -10,10 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import logo from '@/assets/tablepay-logo.png';
-import thoranamGarland from '@/assets/thoranam-garland.png';
-import bananaLeafLeft from '@/assets/banana-leaf-left.png';
-import bananaLeafRight from '@/assets/banana-leaf-right.png';
-import paisleyPattern from '@/assets/paisley-pattern.png';
+import adminAvatar from '@/assets/admin-avatar.png';
+import cashierAvatar from '@/assets/cashier-avatar.png';
+import kitchenAvatar from '@/assets/kitchen-avatar.png';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
@@ -155,42 +154,7 @@ const Login = () => {
       setKitchenLoading(false);
     }
   };
-  return <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden p-4"
-      style={{
-        background: 'linear-gradient(135deg, hsl(30 100% 60% / 0.15) 0%, hsl(35 100% 97%) 50%, hsl(51 100% 50% / 0.1) 100%)',
-        backgroundImage: `url(${paisleyPattern})`,
-        backgroundSize: '400px 400px',
-        backgroundRepeat: 'repeat',
-        backgroundBlendMode: 'soft-light'
-      }}
-    >
-      {/* Thoranam Garland at Top */}
-      <div className="absolute top-0 left-0 right-0 w-full h-32 overflow-hidden z-10 pointer-events-none">
-        <img 
-          src={thoranamGarland} 
-          alt="Thoranam Garland" 
-          className="w-full h-full object-cover object-center opacity-90"
-        />
-      </div>
-
-      {/* Banana Leaf Left Side */}
-      <div className="absolute left-0 top-0 bottom-0 w-24 lg:w-32 overflow-hidden z-0 pointer-events-none">
-        <img 
-          src={bananaLeafLeft} 
-          alt="Banana Leaf" 
-          className="w-full h-full object-cover object-center opacity-40"
-        />
-      </div>
-
-      {/* Banana Leaf Right Side */}
-      <div className="absolute right-0 top-0 bottom-0 w-24 lg:w-32 overflow-hidden z-0 pointer-events-none">
-        <img 
-          src={bananaLeafRight} 
-          alt="Banana Leaf" 
-          className="w-full h-full object-cover object-center opacity-40"
-        />
-      </div>
-
+  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-accent/20 to-secondary/20 p-4">
       {/* Logo and Header */}
       <motion.div initial={{
       opacity: 0,
@@ -198,8 +162,8 @@ const Login = () => {
     }} animate={{
       opacity: 1,
       y: 0
-    }} className="text-center mb-6 relative z-20">
-        <motion.img src={logo} alt="TablePay Logo" className="h-32 w-auto mx-auto mb-2" initial={{
+    }} className="text-center mb-8">
+        <motion.img src={logo} alt="TablePay Logo" className="h-40 w-auto mx-auto mb-3" initial={{
         opacity: 0,
         scale: 0.8
       }} animate={{
@@ -210,12 +174,12 @@ const Login = () => {
         ease: "easeOut"
       }} />
         
-        <p className="text-foreground text-lg">Smart Dining, Smarter Billing</p>
+        <p className="text-muted-foreground">Smart Dining, Smarter Billing</p>
       </motion.div>
 
       {/* Three-Section Login */}
-      <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6 relative z-20">
-        {/* Admin Section */}
+      <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6">
+        {/* Admin Section - Mint Green */}
         <motion.div initial={{
         opacity: 0,
         x: -20
@@ -225,53 +189,51 @@ const Login = () => {
       }} transition={{
         delay: 0.1
       }}>
-          <Card className="shadow-lg border-2 border-[#FF9933]/30 bg-card/95 backdrop-blur-sm">
-            <CardHeader className="text-center space-y-3 pb-4">
-              <div className="w-20 h-20 rounded-full bg-[#FF9933] mx-auto flex items-center justify-center">
-                <LogIn className="w-10 h-10 text-white" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-foreground">Admin Portal</CardTitle>
-              <CardDescription className="text-sm">Full system access and management</CardDescription>
+          <Card className="shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card to-primary/5">
+            <CardHeader className="text-center space-y-2">
+              <img src={adminAvatar} alt="Admin" className="w-24 h-24 mx-auto mb-2" />
+              <CardTitle className="text-2xl">Admin Portal</CardTitle>
+              <CardDescription>Full system access and management</CardDescription>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent>
               <Tabs value={adminMode} onValueChange={v => setAdminMode(v as LoginMode)}>
-                <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50">
-                  <TabsTrigger value="login" className="data-[state=active]:bg-card">Login</TabsTrigger>
-                  <TabsTrigger value="signup" className="data-[state=active]:bg-card">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="login" className="mt-0">
+                <TabsContent value="login">
                   <form onSubmit={handleAdminSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="admin-email" className="text-sm font-medium">Email</Label>
-                      <Input id="admin-email" type="email" placeholder="admin@tablepay.com" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="admin-email">Email</Label>
+                      <Input id="admin-email" type="email" placeholder="admin@tablepay.com" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="admin-password" className="text-sm font-medium">Password</Label>
-                      <Input id="admin-password" type="password" placeholder="••••••••" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="admin-password">Password</Label>
+                      <Input id="admin-password" type="password" placeholder="••••••••" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} required />
                     </div>
-                    <Button type="submit" className="w-full bg-[#FF9933] hover:bg-[#FF9933]/90 text-white" size="lg" disabled={adminLoading}>
-                      {adminLoading ? 'Logging in...' : 'Login'}
+                    <Button type="submit" className="w-full" size="lg" disabled={adminLoading}>
+                      {adminLoading ? 'Logging in...' : 'Login as Admin'}
                     </Button>
                   </form>
                 </TabsContent>
 
-                <TabsContent value="signup" className="mt-0">
+                <TabsContent value="signup">
                   <form onSubmit={handleAdminSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="admin-signup-name" className="text-sm font-medium">Full Name</Label>
-                      <Input id="admin-signup-name" placeholder="John Doe" value={adminName} onChange={e => setAdminName(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="admin-signup-name">Full Name</Label>
+                      <Input id="admin-signup-name" placeholder="John Doe" value={adminName} onChange={e => setAdminName(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="admin-signup-email" className="text-sm font-medium">Email</Label>
-                      <Input id="admin-signup-email" type="email" placeholder="admin@tablepay.com" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="admin-signup-email">Email</Label>
+                      <Input id="admin-signup-email" type="email" placeholder="admin@tablepay.com" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="admin-signup-password" className="text-sm font-medium">Password</Label>
-                      <Input id="admin-signup-password" type="password" placeholder="••••••••" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} required minLength={6} className="bg-background" />
+                      <Label htmlFor="admin-signup-password">Password</Label>
+                      <Input id="admin-signup-password" type="password" placeholder="••••••••" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} required minLength={6} />
                     </div>
-                    <Button type="submit" className="w-full bg-[#FF9933] hover:bg-[#FF9933]/90 text-white" size="lg" disabled={adminLoading}>
-                      {adminLoading ? 'Creating Account...' : 'Sign Up'}
+                    <Button type="submit" className="w-full" size="lg" disabled={adminLoading}>
+                      {adminLoading ? 'Creating Account...' : 'Create Admin Account'}
                     </Button>
                   </form>
                 </TabsContent>
@@ -290,53 +252,51 @@ const Login = () => {
       }} transition={{
         delay: 0.2
       }}>
-          <Card className="shadow-lg border-2 border-[#800000]/30 bg-card/95 backdrop-blur-sm">
-            <CardHeader className="text-center space-y-3 pb-4">
-              <div className="w-20 h-20 rounded-full bg-[#800000] mx-auto flex items-center justify-center">
-                <UserPlus className="w-10 h-10 text-white" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-foreground">Cashier Portal</CardTitle>
-              <CardDescription className="text-sm">Order taking and billing access</CardDescription>
+          <Card className="shadow-2xl border-2 border-secondary/50 bg-gradient-to-br from-card to-secondary/10">
+            <CardHeader className="text-center space-y-2">
+              <img src={cashierAvatar} alt="Cashier" className="w-24 h-24 mx-auto mb-2" />
+              <CardTitle className="text-2xl">Cashier Portal</CardTitle>
+              <CardDescription>Order taking and billing access</CardDescription>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent>
               <Tabs value={cashierMode} onValueChange={v => setCashierMode(v as LoginMode)}>
-                <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50">
-                  <TabsTrigger value="login" className="data-[state=active]:bg-card">Login</TabsTrigger>
-                  <TabsTrigger value="signup" className="data-[state=active]:bg-card">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="login" className="mt-0">
+                <TabsContent value="login">
                   <form onSubmit={handleCashierSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="cashier-email" className="text-sm font-medium">Email</Label>
-                      <Input id="cashier-email" type="email" placeholder="cashier@tablepay.com" value={cashierEmail} onChange={e => setCashierEmail(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="cashier-email">Email</Label>
+                      <Input id="cashier-email" type="email" placeholder="cashier@tablepay.com" value={cashierEmail} onChange={e => setCashierEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="cashier-password" className="text-sm font-medium">Password</Label>
-                      <Input id="cashier-password" type="password" placeholder="••••••••" value={cashierPassword} onChange={e => setCashierPassword(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="cashier-password">Password</Label>
+                      <Input id="cashier-password" type="password" placeholder="••••••••" value={cashierPassword} onChange={e => setCashierPassword(e.target.value)} required />
                     </div>
-                    <Button type="submit" className="w-full bg-[#800000] hover:bg-[#800000]/90 text-white" size="lg" disabled={cashierLoading}>
-                      {cashierLoading ? 'Logging in...' : 'Login'}
+                    <Button type="submit" variant="secondary" className="w-full" size="lg" disabled={cashierLoading}>
+                      {cashierLoading ? 'Logging in...' : 'Login as Cashier'}
                     </Button>
                   </form>
                 </TabsContent>
 
-                <TabsContent value="signup" className="mt-0">
+                <TabsContent value="signup">
                   <form onSubmit={handleCashierSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="cashier-signup-name" className="text-sm font-medium">Full Name</Label>
-                      <Input id="cashier-signup-name" placeholder="Jane Smith" value={cashierName} onChange={e => setCashierName(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="cashier-signup-name">Full Name</Label>
+                      <Input id="cashier-signup-name" placeholder="Jane Smith" value={cashierName} onChange={e => setCashierName(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="cashier-signup-email" className="text-sm font-medium">Email</Label>
-                      <Input id="cashier-signup-email" type="email" placeholder="cashier@tablepay.com" value={cashierEmail} onChange={e => setCashierEmail(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="cashier-signup-email">Email</Label>
+                      <Input id="cashier-signup-email" type="email" placeholder="cashier@tablepay.com" value={cashierEmail} onChange={e => setCashierEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="cashier-signup-password" className="text-sm font-medium">Password</Label>
-                      <Input id="cashier-signup-password" type="password" placeholder="••••••••" value={cashierPassword} onChange={e => setCashierPassword(e.target.value)} required minLength={6} className="bg-background" />
+                      <Label htmlFor="cashier-signup-password">Password</Label>
+                      <Input id="cashier-signup-password" type="password" placeholder="••••••••" value={cashierPassword} onChange={e => setCashierPassword(e.target.value)} required minLength={6} />
                     </div>
-                    <Button type="submit" className="w-full bg-[#800000] hover:bg-[#800000]/90 text-white" size="lg" disabled={cashierLoading}>
-                      {cashierLoading ? 'Creating Account...' : 'Sign Up'}
+                    <Button type="submit" variant="secondary" className="w-full" size="lg" disabled={cashierLoading}>
+                      {cashierLoading ? 'Creating Account...' : 'Create Cashier Account'}
                     </Button>
                   </form>
                 </TabsContent>
@@ -355,53 +315,51 @@ const Login = () => {
       }} transition={{
         delay: 0.3
       }}>
-          <Card className="shadow-lg border-2 border-[#FFD700]/30 bg-card/95 backdrop-blur-sm">
-            <CardHeader className="text-center space-y-3 pb-4">
-              <div className="w-20 h-20 rounded-full bg-[#FFD700] mx-auto flex items-center justify-center">
-                <ChefHat className="w-10 h-10 text-[#800000]" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-foreground">Kitchen Portal</CardTitle>
-              <CardDescription className="text-sm">Order management and preparation</CardDescription>
+          <Card className="shadow-2xl border-2 border-accent/50 bg-gradient-to-br from-card to-accent/10">
+            <CardHeader className="text-center space-y-2">
+              <img src={kitchenAvatar} alt="Kitchen" className="w-24 h-24 mx-auto mb-2" />
+              <CardTitle className="text-2xl">Kitchen Portal</CardTitle>
+              <CardDescription>Order management and preparation</CardDescription>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent>
               <Tabs value={kitchenMode} onValueChange={v => setKitchenMode(v as LoginMode)}>
-                <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50">
-                  <TabsTrigger value="login" className="data-[state=active]:bg-card">Login</TabsTrigger>
-                  <TabsTrigger value="signup" className="data-[state=active]:bg-card">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="login" className="mt-0">
+                <TabsContent value="login">
                   <form onSubmit={handleKitchenSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="kitchen-email" className="text-sm font-medium">Email</Label>
-                      <Input id="kitchen-email" type="email" placeholder="kitchen@tablepay.com" value={kitchenEmail} onChange={e => setKitchenEmail(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="kitchen-email">Email</Label>
+                      <Input id="kitchen-email" type="email" placeholder="kitchen@tablepay.com" value={kitchenEmail} onChange={e => setKitchenEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="kitchen-password" className="text-sm font-medium">Password</Label>
-                      <Input id="kitchen-password" type="password" placeholder="••••••••" value={kitchenPassword} onChange={e => setKitchenPassword(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="kitchen-password">Password</Label>
+                      <Input id="kitchen-password" type="password" placeholder="••••••••" value={kitchenPassword} onChange={e => setKitchenPassword(e.target.value)} required />
                     </div>
-                    <Button type="submit" className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#800000] font-semibold" size="lg" disabled={kitchenLoading}>
-                      {kitchenLoading ? 'Logging in...' : 'Login'}
+                    <Button type="submit" variant="outline" className="w-full" size="lg" disabled={kitchenLoading}>
+                      {kitchenLoading ? 'Logging in...' : 'Login as Kitchen'}
                     </Button>
                   </form>
                 </TabsContent>
 
-                <TabsContent value="signup" className="mt-0">
+                <TabsContent value="signup">
                   <form onSubmit={handleKitchenSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="kitchen-signup-name" className="text-sm font-medium">Full Name</Label>
-                      <Input id="kitchen-signup-name" placeholder="Chef Mike" value={kitchenName} onChange={e => setKitchenName(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="kitchen-signup-name">Full Name</Label>
+                      <Input id="kitchen-signup-name" placeholder="Chef Mike" value={kitchenName} onChange={e => setKitchenName(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="kitchen-signup-email" className="text-sm font-medium">Email</Label>
-                      <Input id="kitchen-signup-email" type="email" placeholder="kitchen@tablepay.com" value={kitchenEmail} onChange={e => setKitchenEmail(e.target.value)} required className="bg-background" />
+                      <Label htmlFor="kitchen-signup-email">Email</Label>
+                      <Input id="kitchen-signup-email" type="email" placeholder="kitchen@tablepay.com" value={kitchenEmail} onChange={e => setKitchenEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="kitchen-signup-password" className="text-sm font-medium">Password</Label>
-                      <Input id="kitchen-signup-password" type="password" placeholder="••••••••" value={kitchenPassword} onChange={e => setKitchenPassword(e.target.value)} required minLength={6} className="bg-background" />
+                      <Label htmlFor="kitchen-signup-password">Password</Label>
+                      <Input id="kitchen-signup-password" type="password" placeholder="••••••••" value={kitchenPassword} onChange={e => setKitchenPassword(e.target.value)} required minLength={6} />
                     </div>
-                    <Button type="submit" className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#800000] font-semibold" size="lg" disabled={kitchenLoading}>
-                      {kitchenLoading ? 'Creating Account...' : 'Sign Up'}
+                    <Button type="submit" variant="outline" className="w-full" size="lg" disabled={kitchenLoading}>
+                      {kitchenLoading ? 'Creating Account...' : 'Create Kitchen Account'}
                     </Button>
                   </form>
                 </TabsContent>
