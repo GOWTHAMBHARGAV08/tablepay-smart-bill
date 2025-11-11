@@ -158,16 +158,7 @@ const Login = () => {
       setKitchenLoading(false);
     }
   };
-  return <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Background Image */}
-      <div className="fixed inset-0 z-0">
-        <img 
-          src={backgroundImage} 
-          alt="" 
-          className="w-full h-full object-cover"
-        />
-      </div>
-
+  return <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#FFF8F0] via-[#FFECD0] to-[#FFE4B5]">
       {/* Thoranam Decoration */}
       <div className="absolute top-0 left-0 right-0 w-full z-10 h-24">
         <img 
