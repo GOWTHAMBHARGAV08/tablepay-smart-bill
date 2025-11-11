@@ -16,6 +16,7 @@ import kitchenAvatar from '@/assets/kitchen-avatar.png';
 import thoranam from '@/assets/thoranam.png';
 import bananaLeafLeft from '@/assets/banana-leaf-left.png';
 import bananaLeafRight from '@/assets/banana-leaf-right.png';
+import backgroundImage from '@/assets/background.jpg';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
@@ -157,20 +158,13 @@ const Login = () => {
       setKitchenLoading(false);
     }
   };
-  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#FFF8F0] via-[#FFECD0] to-[#FFE4B5] relative overflow-hidden">
-      {/* Banana Leaf Decorations */}
-      <div className="fixed bottom-0 left-0 z-0 h-[700px] w-auto opacity-80">
+  return <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Background Image */}
+      <div className="fixed inset-0 z-0">
         <img 
-          src={bananaLeafLeft} 
+          src={backgroundImage} 
           alt="" 
-          className="h-full w-auto object-contain"
-        />
-      </div>
-      <div className="fixed bottom-0 right-0 z-0 h-[700px] w-auto opacity-80">
-        <img 
-          src={bananaLeafRight} 
-          alt="" 
-          className="h-full w-auto object-contain"
+          className="w-full h-full object-cover"
         />
       </div>
 
@@ -222,7 +216,7 @@ const Login = () => {
       }} transition={{
         delay: 0.1
       }}>
-          <Card className="shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card to-primary/5">
+          <Card className="shadow-2xl border-2 border-primary/30 bg-card/70 backdrop-blur-sm">
             <CardHeader className="text-center space-y-2">
               <img src={adminAvatar} alt="Admin" className="w-24 h-24 mx-auto mb-2" />
               <CardTitle className="text-2xl">Admin Portal</CardTitle>
@@ -285,7 +279,7 @@ const Login = () => {
       }} transition={{
         delay: 0.2
       }}>
-          <Card className="shadow-2xl border-2 border-secondary/50 bg-gradient-to-br from-card to-secondary/10">
+          <Card className="shadow-2xl border-2 border-secondary/50 bg-card/70 backdrop-blur-sm">
             <CardHeader className="text-center space-y-2">
               <img src={cashierAvatar} alt="Cashier" className="w-24 h-24 mx-auto mb-2" />
               <CardTitle className="text-2xl">Cashier Portal</CardTitle>
@@ -348,7 +342,7 @@ const Login = () => {
       }} transition={{
         delay: 0.3
       }}>
-          <Card className="shadow-2xl border-2 border-accent/50 bg-gradient-to-br from-card to-accent/10">
+          <Card className="shadow-2xl border-2 border-accent/50 bg-card/70 backdrop-blur-sm">
             <CardHeader className="text-center space-y-2">
               <img src={kitchenAvatar} alt="Kitchen" className="w-24 h-24 mx-auto mb-2" />
               <CardTitle className="text-2xl">Kitchen Portal</CardTitle>
