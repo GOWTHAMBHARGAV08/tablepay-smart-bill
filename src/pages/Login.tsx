@@ -157,13 +157,12 @@ const Login = () => {
   };
   return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#FFF8F0] via-[#FFECD0] to-[#FFE4B5] relative overflow-hidden">
       {/* Thoranam Decoration */}
-      <div className="absolute top-0 left-0 right-0 w-full h-32 z-10">
+      <div className="absolute top-0 left-0 right-0 w-full flex justify-center z-10">
         <img 
           src={thoranam} 
           alt="Thoranam Decoration" 
-          className="w-full h-full object-cover object-top"
+          className="h-auto max-h-40 w-auto object-contain"
           style={{ 
-            objectFit: 'fill',
             filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
           }}
         />
