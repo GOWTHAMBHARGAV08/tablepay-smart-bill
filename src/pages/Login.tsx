@@ -161,7 +161,7 @@ const Login = () => {
         <img 
           src={thoranam} 
           alt="Thoranam Decoration" 
-          className="h-auto max-h-40 w-auto object-contain"
+          className="h-auto max-h-56 w-auto object-contain"
           style={{ 
             filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
           }}
