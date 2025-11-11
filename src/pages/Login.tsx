@@ -14,6 +14,8 @@ import adminAvatar from '@/assets/admin-avatar.png';
 import cashierAvatar from '@/assets/cashier-avatar.png';
 import kitchenAvatar from '@/assets/kitchen-avatar.png';
 import thoranam from '@/assets/thoranam.png';
+import bananaLeafLeft from '@/assets/banana-leaf-left.png';
+import bananaLeafRight from '@/assets/banana-leaf-right.png';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
@@ -156,6 +158,22 @@ const Login = () => {
     }
   };
   return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#FFF8F0] via-[#FFECD0] to-[#FFE4B5] relative overflow-hidden">
+      {/* Banana Leaf Decorations */}
+      <div className="fixed bottom-0 left-0 z-0 h-[700px] w-auto opacity-80">
+        <img 
+          src={bananaLeafLeft} 
+          alt="" 
+          className="h-full w-auto object-contain"
+        />
+      </div>
+      <div className="fixed bottom-0 right-0 z-0 h-[700px] w-auto opacity-80">
+        <img 
+          src={bananaLeafRight} 
+          alt="" 
+          className="h-full w-auto object-contain"
+        />
+      </div>
+
       {/* Thoranam Decoration */}
       <div className="absolute top-0 left-0 right-0 w-full z-10 h-48">
         <img 
