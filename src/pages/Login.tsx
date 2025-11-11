@@ -190,7 +190,7 @@ const Login = () => {
         opacity: 1,
         y: 0
       }} className="text-center mb-8">
-          <motion.img src={logo} alt="TablePay Logo" className="h-40 w-auto mx-auto mb-3" initial={{
+          <motion.img src={logo} alt="TablePay Logo" className="h-56 w-auto mx-auto mb-3" initial={{
           opacity: 0,
           scale: 0.8
         }} animate={{
