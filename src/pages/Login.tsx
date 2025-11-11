@@ -13,6 +13,7 @@ import logo from '@/assets/tablepay-logo.png';
 import adminAvatar from '@/assets/admin-avatar.png';
 import cashierAvatar from '@/assets/cashier-avatar.png';
 import kitchenAvatar from '@/assets/kitchen-avatar.png';
+import thoranam from '@/assets/thoranam.png';
 type LoginMode = 'login' | 'signup';
 const Login = () => {
   const navigate = useNavigate();
@@ -154,31 +155,45 @@ const Login = () => {
       setKitchenLoading(false);
     }
   };
-  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-accent/20 to-secondary/20 p-4">
-      {/* Logo and Header */}
-      <motion.div initial={{
-      opacity: 0,
-      y: -20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} className="text-center mb-8">
-        <motion.img src={logo} alt="TablePay Logo" className="h-40 w-auto mx-auto mb-3" initial={{
+  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#FFF8F0] via-[#FFECD0] to-[#FFE4B5] relative overflow-hidden">
+      {/* Thoranam Decoration */}
+      <div className="absolute top-0 left-0 right-0 w-full h-32 z-10">
+        <img 
+          src={thoranam} 
+          alt="Thoranam Decoration" 
+          className="w-full h-full object-cover object-top"
+          style={{ 
+            objectFit: 'fill',
+            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
+          }}
+        />
+      </div>
+
+      <div className="relative z-20 p-4 pt-36">
+        {/* Logo and Header */}
+        <motion.div initial={{
         opacity: 0,
-        scale: 0.8
+        y: -20
       }} animate={{
         opacity: 1,
-        scale: 1
-      }} transition={{
-        duration: 0.5,
-        ease: "easeOut"
-      }} />
-        
-        <p className="text-muted-foreground">Smart Dining, Smarter Billing</p>
-      </motion.div>
+        y: 0
+      }} className="text-center mb-8">
+          <motion.img src={logo} alt="TablePay Logo" className="h-40 w-auto mx-auto mb-3" initial={{
+          opacity: 0,
+          scale: 0.8
+        }} animate={{
+          opacity: 1,
+          scale: 1
+        }} transition={{
+          duration: 0.5,
+          ease: "easeOut"
+        }} />
+          
+          <p className="text-[#800000] font-medium text-lg">Smart Dining, Smarter Billing</p>
+        </motion.div>
 
-      {/* Three-Section Login */}
-      <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6">
+        {/* Three-Section Login */}
+        <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-6">
         {/* Admin Section - Mint Green */}
         <motion.div initial={{
         opacity: 0,
@@ -367,6 +382,7 @@ const Login = () => {
             </CardContent>
           </Card>
         </motion.div>
+        </div>
       </div>
     </div>;
 };
