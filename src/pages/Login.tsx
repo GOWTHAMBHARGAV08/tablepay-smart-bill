@@ -157,7 +157,7 @@ const Login = () => {
   };
   return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#FFF8F0] via-[#FFECD0] to-[#FFE4B5] relative overflow-hidden">
       {/* Thoranam Decoration */}
-      <div className="absolute top-0 left-0 right-0 w-full z-10 h-32">
+      <div className="absolute top-0 left-0 right-0 w-full z-10 h-48">
         <img 
           src={thoranam} 
           alt="Thoranam Decoration" 
